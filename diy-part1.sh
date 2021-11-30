@@ -11,10 +11,10 @@
 #
 
 # Uncomment a feed source
-sed -i 's/^src\(.*routing\)/#\1/' feeds.conf.default
-sed -i 's/^src\(.*telephony\)/#\1/' feeds.conf.default
+# sed -i 's/^src\(.*routing\)/#\1/' feeds.conf.default
+# sed -i 's/^src\(.*telephony\)/#\1/' feeds.conf.default
 
 # Add a feed source
 
-echo 'src-git passwall https://github.com/xiaorouji/openwrt-passwall' >>feeds.conf.default
-echo 'src-git kenzo https://github.com/kenzok8/openwrt-packages.git' >>feeds.conf.default
+# echo 'src-git passwall https://github.com/xiaorouji/openwrt-passwall' >>feeds.conf.default
+# echo 'src-git kenzo https://github.com/kenzok8/openwrt-packages.git' >>feeds.conf.default

@@ -4,6 +4,8 @@
 # documentation.
 
 name: Publish Docker image
+on:
+  workflow_dispatch:
 
 
 jobs:

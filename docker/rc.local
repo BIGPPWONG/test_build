@@ -1,0 +1,4 @@
+# Put your custom commands here that should be executed once
+# the system init finished. By default this file does nothing.
+cat /root/resolv.conf > /etc/resolv.conf
+exit 0

@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+  openwrt:
+    image: raymondwong/openwrt_r9:4.18
+    container_name: openwrt_r9
+    privileged: true
+    restart: always
+    networks:
+      openwrt_macnet:
+        ipv4_address: 192.168.1.254
+
+networks:
+  openwrt_macnet:
+    driver: macvlan
+    driver_opts:
+      parent: en0
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24
+          ip_range: 192.168.1.128/25
+          gateway: 192.168.1.1
+

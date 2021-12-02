@@ -1,0 +1,10 @@
+FROM openwrt:r9
+COPY openwrt-x86-64-combined-ext4.img /
+#RUN mkdir /mnt/openwrt&&ls /mnt&&mount -o loop,offset=17301504 /openwrt-x86-64-combined-ext4.img /mnt/openwrt&&cp -rf /mnt/openwrt /&&umount /mnt/openwrt
+
+RUN mkdir /var/lock
+
+EXPOSE 80 443 22
+USER root
+CMD ["/sbin/init"]
+

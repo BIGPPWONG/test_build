@@ -1,6 +1,8 @@
 name: Publish Docker image
 
-on: workflow_dispatch
+on:
+  repository_dispatch:
+  workflow_dispatch:
 
 
 jobs:

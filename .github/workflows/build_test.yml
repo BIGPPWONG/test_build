@@ -28,8 +28,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v2.7.0
         with:
-          context: files
-          file: openwrt/Dockerfile-x86
+          context: docker
+          file: Dockerfile-x86
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

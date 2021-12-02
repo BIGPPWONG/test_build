@@ -1,2 +1,0 @@
-FROM centos:7
-EXPOSE 80

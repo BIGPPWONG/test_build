@@ -26,7 +26,7 @@ jobs:
           images: raymondwong/github_build_test
       
       - name: Build and push Docker image
-        uses: docker/build-push-actio@v2.7.0
+        uses: docker/build-push-action@v2.7.0
         with:
           context: files
           push: true

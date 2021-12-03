@@ -169,7 +169,7 @@ jobs:
           file: docker/Dockerfile-x86
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          labels: ${{ steps.meta.outputs.labels }}-x86_64
 
     - name: Upload firmware to cowtransfer
       id: cowtransfer

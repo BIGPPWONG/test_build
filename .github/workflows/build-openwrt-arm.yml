@@ -168,7 +168,8 @@ jobs:
           flavor: |
             latest=false
             suffix=-arm64
-          images: raymondwong/github_build_test
+            prefix=autobuild
+          images: raymondwong/openwrt_r9
       
     - name: Build and push Docker image
       uses: docker/build-push-action@v2.7.0

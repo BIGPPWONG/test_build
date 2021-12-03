@@ -11,11 +11,9 @@
 name: Build OpenWrt for ARM
 
 on:
-  push:
-    # Sequence of patterns matched against refs/heads
-    branches:    
-      # Push events to branches matching refs/heads/releases/10
-      - 'releases/**'
+  release:
+    types: # This configuration does not affect the page_build event above
+      - created
   repository_dispatch:
   workflow_dispatch:
     inputs:

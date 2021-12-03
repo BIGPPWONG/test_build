@@ -160,6 +160,9 @@ jobs:
       id: meta
       uses: docker/metadata-action@v3.6.1
       with:
+          flavor: |
+            latest=false
+            suffix=x86_64
           images: raymondwong/github_build_test
       
     - name: Build and push Docker image
@@ -169,7 +172,7 @@ jobs:
           file: docker/Dockerfile-x86
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}-x86_64
+          labels: ${{ steps.meta.outputs.labels }}
 
     - name: Upload firmware to cowtransfer
       id: cowtransfer

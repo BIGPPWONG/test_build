@@ -1,6 +1,7 @@
 FROM scratch
 #ADD openwrt-armvirt-64-default-rootfs.tar.gz /
 ADD openwrt-x86-64-generic-rootfs.tar.gz /
+COPY AdGuardHome /usr/bin/AdGuardHome
 COPY turboacc /etc/config/turboacc
 COPY dhcp /etc/config/dhcp
 COPY firewall /etc/config/firewall

@@ -54,6 +54,11 @@ jobs:
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
 
+    - name: Download Adguard Home
+      run: |
+        curl https://static.adguard.com/adguardhome/release/AdGuardHome_linux_arm64.tar.gz | tar -xvz
+        cp AdGuardHome/AdGuardHome docker/
+
     - name: Clone source code
       working-directory: /workdir
       run: |

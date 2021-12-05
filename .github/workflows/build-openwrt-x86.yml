@@ -162,8 +162,8 @@ jobs:
       with:
           flavor: |
             latest=false
-            suffix=x86_64
-            prefix=autobuild
+            suffix=-x86_64
+            prefix=autobuild-
           images: raymondwong/openwrt_r9
       
     - name: Build and push Docker image

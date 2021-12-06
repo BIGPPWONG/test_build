@@ -3,13 +3,13 @@ config defaults
         option input 'ACCEPT'
         option output 'ACCEPT'
         option forward 'ACCEPT'
-        option flow_offloading '1'
+        option flow_offloading '0'
         option flow_offloading_hw '0'
         option fullcone '0'
 
 config zone
         option name 'lan'
-        list network 'lan'
+        list network 'lan lan6'
         option input 'ACCEPT'
         option output 'ACCEPT'
         option forward 'ACCEPT'

@@ -1,0 +1,41 @@
+#!/bin/sh
+# put this in /etc/hotplug.d/iface
+if [ "$ACTION" == "ifup" -a "$INTERFACE" == "cloudflare" ]
+then
+nohup /usr/bin/chisel client --auth goodweather:sfewarfgbsdfhjydgjrdt infinite-hamlet-02522.herokuapp.com 162.159.193.1:2408/udp &
+iptables -t mangle -A PREROUTING -d 0.0.0.0/8 -j RETURN
+iptables -t mangle -A PREROUTING -d 10.0.0.0/8 -j RETURN
+iptables -t mangle -A PREROUTING -d 127.0.0.0/8 -j RETURN
+iptables -t mangle -A PREROUTING -d 169.254.0.0/16 -j RETURN
+iptables -t mangle -A PREROUTING -d 172.16.0.0/12 -j RETURN
+iptables -t mangle -A PREROUTING -d 192.168.0.0/16 -j RETURN
+iptables -t mangle -A PREROUTING -d 224.0.0.0/4 -j RETURN
+iptables -t mangle -A PREROUTING -d 240.0.0.0/4 -j RETURN
+iptables -t mangle -A PREROUTING -d 162.159.193.0/24 -j RETURN
+iptables -A PREROUTING -t mangle -i br-lan -m set ! --match-set cn dst -j MARK --set-mark 123
+ip rule add fwmark 123 table 123
+ip route add 1.1.1.1 dev cloudflare
+ip route add default dev cloudflare table 123
+ip6tables -t nat -I POSTROUTING -s `uci get network.globals.ula_prefix` -j MASQUERADE
+ip -6 route add default dev cloudflare
+fi
+
+if [ "$ACTION" == "ifdown" -a "$INTERFACE" == "cloudflare" ]
+then
+killall chisel
+iptables -t mangle -D PREROUTING -d 0.0.0.0/8 -j RETURN
+iptables -t mangle -D PREROUTING -d 10.0.0.0/8 -j RETURN
+iptables -t mangle -D PREROUTING -d 127.0.0.0/8 -j RETURN
+iptables -t mangle -D PREROUTING -d 169.254.0.0/16 -j RETURN
+iptables -t mangle -D PREROUTING -d 172.16.0.0/12 -j RETURN
+iptables -t mangle -D PREROUTING -d 192.168.0.0/16 -j RETURN
+iptables -t mangle -D PREROUTING -d 224.0.0.0/4 -j RETURN
+iptables -t mangle -D PREROUTING -d 240.0.0.0/4 -j RETURN
+iptables -t mangle -D PREROUTING -d 162.159.193.0/24 -j RETURN
+iptables -D PREROUTING -t mangle -i br-lan -m set ! --match-set cn dst -j MARK --set-mark 123
+ip rule del fwmark 123 table 123
+#ip route add 1.1.1.1 dev cloudflare
+#ip route add default dev cloudflare table 123
+ip6tables -t nat -D POSTROUTING -s `uci get network.globals.ula_prefix` -j MASQUERADE
+#ip -6 route del default dev cloudflare
+fi

@@ -1,0 +1,10 @@
+#!/bin/sh /etc/rc.common
+# put this file in /etc/init.d/
+USE_PROCD=1
+START=95
+STOP=01
+start_service() {
+    procd_open_instance
+    procd_set_param command /usr/bin/chisel client --auth goodweather:sfewarfgbsdfhjydgjrdt infinite-hamlet-02522.herokuapp.com 162.159.193.1:2408/udp
+    procd_close_instance
+}

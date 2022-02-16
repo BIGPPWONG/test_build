@@ -2,7 +2,7 @@
 # put this in /etc/hotplug.d/iface
 if [ "$ACTION" == "ifup" -a "$INTERFACE" == "cloudflare" ]
 then
-nohup /usr/bin/chisel client --auth goodweather:sfewarfgbsdfhjydgjrdt infinite-hamlet-02522.herokuapp.com 162.159.193.1:2408/udp &
+#nohup /usr/bin/chisel client --auth goodweather:sfewarfgbsdfhjydgjrdt infinite-hamlet-02522.herokuapp.com 162.159.193.1:2408/udp &
 iptables -t mangle -A PREROUTING -d 0.0.0.0/8 -j RETURN
 iptables -t mangle -A PREROUTING -d 10.0.0.0/8 -j RETURN
 iptables -t mangle -A PREROUTING -d 127.0.0.0/8 -j RETURN
@@ -22,7 +22,7 @@ fi
 
 if [ "$ACTION" == "ifdown" -a "$INTERFACE" == "cloudflare" ]
 then
-killall chisel
+#killall chisel
 iptables -t mangle -D PREROUTING -d 0.0.0.0/8 -j RETURN
 iptables -t mangle -D PREROUTING -d 10.0.0.0/8 -j RETURN
 iptables -t mangle -D PREROUTING -d 127.0.0.0/8 -j RETURN

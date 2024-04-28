@@ -1,0 +1,115 @@
+name: Build Docker Image from OpenWRT Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      x86_64_url:
+        description: 'URL for the x86-64 img.gz'
+        required: true
+      arm64_url:
+        description: 'URL for the ARM64 img.gz'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - arch: x86-64
+            url: ${{ github.event.inputs.x86_64_url }}
+            suffix: -x86_64
+            adguard: AdGuardHome_linux_amd64.tar.gz
+          - arch: arm64
+            url: ${{ github.event.inputs.arm64_url }}
+            suffix: -arm64
+            adguard: AdGuardHome_linux_arm64.tar.gz
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y p7zip-full curl
+
+    - name: Download img.gz file
+      run: |
+        curl -L "${{ matrix.url }}" -o openwrt-${{ matrix.arch }}.img.gz
+
+    - name: Extract .img.gz
+      run: |
+        gunzip -k openwrt-${{ matrix.arch }}.img.gz
+
+    - name: Mount and Extract Nested Images
+      run: |
+        mkdir /mnt/img
+        sudo modprobe loop
+        sudo losetup -fP openwrt-${{ matrix.arch }}.img
+        LOOP_DEV=$(sudo losetup -l | grep openwrt-${{ matrix.arch }}.img | awk '{print $1}')
+        sudo mount $LOOP_DEV /mnt/img
+        # 假设所有子img文件都在某个目录下，这里用 cp 命令提取出来
+        sudo cp /mnt/img/*.img .
+        sudo umount /mnt/img
+        sudo losetup -d $LOOP_DEV
+
+    - name: Find Largest Image
+      id: largest_img
+      run: |
+        FILE=$(ls -S *.img | head -n1)
+        echo "Largest image: $FILE"
+        echo "::set-output name=LARGEST_IMG::$FILE"
+
+    - name: Prepare rootfs.tar
+      run: |
+        sudo mkdir /mnt/largest_img
+        sudo losetup -fP ${{ steps.largest_img.outputs.LARGEST_IMG }}
+        LOOP_DEV=$(sudo losetup -l | grep ${{ steps.largest_img.outputs.LARGEST_IMG }} | awk '{print $1}')
+        sudo mount $LOOP_DEV /mnt/largest_img
+        sudo tar -czf rootfs.tar -C /mnt/largest_img .
+        sudo umount /mnt/largest_img
+        sudo losetup -d $LOOP_DEV
+
+    - name: Copy rootfs.tar to docker dir
+      run: |
+        cp rootfs.tar docker/
+
+    - name: Download Adguard Home
+      run: |
+        curl -L "https://static.adguard.com/adguardhome/release/${{ matrix.adguard }}" | tar -xvz
+        cp AdGuardHome/AdGuardHome docker/
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1.10.0
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Get current date
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y%m%d')"
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v3.6.1
+      with:
+        flavor: |
+          latest=false
+          suffix=${{ matrix.suffix }}-${{ github.run_id }}-${{ steps.date.outputs.date }}
+          prefix=autobuild-
+        images: raymondwong/openwrt_r9
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2.7.0
+      with:
+        context: docker
+        file: docker/Dockerfile
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+

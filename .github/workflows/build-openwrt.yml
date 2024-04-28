@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         include:
           - arch: x86-64
@@ -37,6 +38,15 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y p7zip-full curl
+
+    - name: Check if URL exists
+      id: check_url
+      run: |
+        if curl --output /dev/null --silent --head --fail "${{ matrix.url }}"; then
+          echo "URL check passed."
+        else
+          echo "URL check failed. Exiting..."
+          exit 1
 
     - name: Download img.gz file
       run: |

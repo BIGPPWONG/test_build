@@ -55,7 +55,7 @@ jobs:
 
     - name: Extract .img.gz
       run: |
-        gunzip -k openwrt-${{ matrix.arch }}.img.gz
+        gunzip -k openwrt-${{ matrix.arch }}.img.gz || true
 
     - name: Mount and Extract Nested Images
       run: |

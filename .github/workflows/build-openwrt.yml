@@ -36,7 +36,7 @@ jobs:
 
     - name: Check URL Availability
       run: |
-        if curl --output /dev/null --silent --head --fail "https://op.dllkids.xyz/op/firmware/Lean/04.27-openwrt-x86-64-generic-squashfs-combined-efi.img.gz"; then
+        if curl --output /dev/null --silent --head --fail "${{ matrix.url }}"; then
           echo "URL exists, proceeding..."
           # Add commands here to execute if URL exists
         else
